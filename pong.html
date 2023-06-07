@@ -27,14 +27,38 @@
     }
 
     const left_paddle = {
-        x: canvas.width/2,
-        y: canvas.height/2,
-        circleRadius: 130,
+        x: width/4 - 130,
+        y: height/4,
+        circleRadius: 110,
         circleBorder: 5
     }
 
     // game loop
     function loop() {
+        draw_table();
+
+        //puck
+        context.beginPath();
+        context.arc(puck.x, puck.y, puck.circleRadius, 0, 2 * Math.PI);
+        context.fillStyle = 'red'
+        context.lineWidth = puck.circleBorder;
+        context.strokeStyle = 'black';
+        context.fill();
+        context.stroke();
+
+        //paddle
+        context.beginPath();
+        context.arc(left_paddle.x, left_paddle.y, left_paddle.circleRadius, 0, 2 * Math.PI);
+        context.fillStyle = 'red'
+        context.lineWidth = left_paddle.circleBorder;
+        context.strokeStyle = 'black';
+        context.fill();
+        context.stroke();
+
+        requestAnimationFrame(loop)
+    }
+
+    function draw_table(){
         //middle dotted line
         for (let i = 0; i < height; i += grid * 2.5) {
             context.fillStyle = 'red';
@@ -50,14 +74,19 @@
         context.fill();
         context.stroke();
 
-        //left circle
-        // for (let i = 0; i < 200; i+100) {
-        //     context.beginPath();
-        //     context.arc(width/4 - 130, height/4 + i, 160, 0, 2 * Math.PI);
-        //     context.lineWidth = 10;
-        //     context.strokeStyle = 'red';
-        //     context.stroke();
-        // }
+        //side circles
+        function drawCircles(x, y){
+            context.beginPath();
+            context.arc(x, y, 160, 0, 2 * Math.PI);
+            context.lineWidth = 10;
+            context.strokeStyle = 'red';
+            context.stroke();
+        }
+
+        drawCircles(width/4 - 130, height/4);
+        drawCircles(width/4 - 130, height*0.75);
+        drawCircles(width*0.75 + 130, height/4);
+        drawCircles(width*0.75 + 130, height*0.75);
 
         //two blue lines
         context.fillStyle = 'lightblue';
@@ -69,19 +98,7 @@
         context.fillRect(0, 0, width, grid*1.5);
         context.fillRect(0, height - grid*1.5, width, grid*1.5);
         
-        //puck
-        context.beginPath();
-        context.arc(puck.x, puck.y, puck.circleRadius, 0, 2 * Math.PI);
-        context.fillStyle = 'red'
-        context.lineWidth = puck.circleBorder;
-        context.strokeStyle = 'black';
-        context.fill();
-        context.stroke();
-
-        requestAnimationFrame(loop)
     }
-
-
 
 
 
