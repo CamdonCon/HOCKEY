@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PONG</title>
+    <meta charset="UTF-8">
+
+</head>
+
+
+<body style="background-color:white;">
+    <canvas width="2400" height="1180" id="game"></canvas>
+    
+<script>
+    const canvas = document.getElementById('game');
+    const context = canvas.getContext('2d');
+    const grid = 20;
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+//leftpad, righpad, puck, canvas score system
+    const puck = {
+        x: canvas.width/2,
+        y: canvas.height/2,
+        circleRadius: 40,
+        circleBorder: 5
+    }
+
+    const left_paddle = {
+        x: canvas.width/2,
+        y: canvas.height/2,
+        circleRadius: 130,
+        circleBorder: 5
+    }
+
+    // game loop
+    function loop() {
+        //middle dotted line
+        for (let i = 0; i < height; i += grid * 2.5) {
+            context.fillStyle = 'red';
+            context.fillRect(width / 2 - (grid*1.5)/2, i, 30, grid*1.5);
+        }
+
+        //center circle
+        context.beginPath();
+        context.arc(width/2, height/2, 210, 0, 2 * Math.PI);
+        context.fillStyle = 'white'
+        context.lineWidth = 10;
+        context.strokeStyle = 'lightblue';
+        context.fill();
+        context.stroke();
+
+        //left circle
+        // for (let i = 0; i < 200; i+100) {
+        //     context.beginPath();
+        //     context.arc(width/4 - 130, height/4 + i, 160, 0, 2 * Math.PI);
+        //     context.lineWidth = 10;
+        //     context.strokeStyle = 'red';
+        //     context.stroke();
+        // }
+
+        //two blue lines
+        context.fillStyle = 'lightblue';
+        context.fillRect(width/4 + 150, 0, grid*1.5, height);
+        context.fillRect(width/4 + width/2 - 180, 0, 30, height);
+
+        //border
+        context.fillStyle = 'black';
+        context.fillRect(0, 0, width, grid*1.5);
+        context.fillRect(0, height - grid*1.5, width, grid*1.5);
+        
+        //puck
+        context.beginPath();
+        context.arc(puck.x, puck.y, puck.circleRadius, 0, 2 * Math.PI);
+        context.fillStyle = 'red'
+        context.lineWidth = puck.circleBorder;
+        context.strokeStyle = 'black';
+        context.fill();
+        context.stroke();
+
+        requestAnimationFrame(loop)
+    }
+
+
+
+
+
+    // starting the game
+    requestAnimationFrame(loop);
+
+</script>
+</body> 
+</html> 
+
+<style>
+    html, body {
+        height: 93.5%;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 80px solid lightgrey; 
+    }
+
+    #container {
+        width: 750px;
+        height: 585px;
+    }
+
+    
+
+
+</style>
