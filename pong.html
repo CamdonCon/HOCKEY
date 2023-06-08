@@ -7,7 +7,7 @@
 </head>
 
 
-<body style="background-color:white;">
+<body style="background-color:black;">
     <canvas width="2400" height="1180" id="game"></canvas>
     
 <script>
@@ -17,25 +17,85 @@
 
     const width = canvas.width;
     const height = canvas.height;
+    const paddleSpeed = 3;
+    const puckSpeed = 2;
+
+    const minX = 110;
+    const minY = 142;
+    const maxX = width - 110;
+    const maxY = height - 142;
 
 //leftpad, righpad, puck, canvas score system
     const puck = {
         x: canvas.width/2,
         y: canvas.height/2,
         circleRadius: 40,
-        circleBorder: 5
+        circleBorder: 5,
+        section: "all",
+
+        dx: 0,
+        dy: 0
     }
 
     const left_paddle = {
         x: width/4 - 130,
         y: height/4,
         circleRadius: 110,
-        circleBorder: 5
+        circleBorder: 5,
+        section: "left",
+
+        dx: 0,
+        dy: 0
+    }
+
+    const right_paddle = {
+        x: width*0.75 + 130, 
+        y: height*0.75,
+        circleRadius: 110,
+        circleBorder: 5,
+        section: "right",
+
+        dx: 0,
+        dy: 0
+    }
+
+    function collides(obj1, obj2) {
+        return obj1.x < obj2.x + obj2.width &&
+                obj1.x + obj1.width > obj2.x &&
+                obj1.y < obj2.y + obj2.height &&
+                obj1.y + obj1.height > obj2.y;
+    }
+
+    function stayInBorder(obj, minX, minY, maxX, maxY){
+        if(obj.y <= minY){
+            obj.y = minY;
+        } 
+        if(obj.x <= minX){
+            obj.x = minX;
+        } 
+        if(obj.y >= maxY){
+            obj.y = maxY;
+        } 
+        if(obj.x >= maxX){
+            obj.x = maxX;
+        } 
     }
 
     // game loop
     function loop() {
         draw_table();
+
+        //move paddles
+        left_paddle.y += left_paddle.dy;
+        left_paddle.x += left_paddle.dx;
+        right_paddle.y += right_paddle.dy;
+        right_paddle.x += right_paddle.dx;
+
+        //move puck
+
+        stayInBorder(left_paddle, minX, minY, width/2 - 110, maxY);
+        stayInBorder(right_paddle, width/2 + 110, minY, maxX, maxY);
+        stayInBorder(puck, minX, minY, maxX, maxY);
 
         //puck
         context.beginPath();
@@ -46,7 +106,7 @@
         context.fill();
         context.stroke();
 
-        //paddle
+        //left paddle
         context.beginPath();
         context.arc(left_paddle.x, left_paddle.y, left_paddle.circleRadius, 0, 2 * Math.PI);
         context.fillStyle = 'red'
@@ -55,8 +115,72 @@
         context.fill();
         context.stroke();
 
+        //right paddle
+        context.beginPath();
+        context.arc(right_paddle.x, right_paddle.y, right_paddle.circleRadius, 0, 2 * Math.PI);
+        context.fillStyle = 'red'
+        context.lineWidth = right_paddle.circleBorder;
+        context.strokeStyle = 'black';
+        context.fill();
+        context.stroke();
+
         requestAnimationFrame(loop)
     }
+
+    // listen to keyboard events to move the paddles
+    document.addEventListener('keydown', function(e) {
+        //* * * * * RIGHT PADDLE * * * * *
+        // up arrow key
+        if (e.which === 38) {
+            right_paddle.dy = -paddleSpeed;
+        }
+        // down arrow key
+        else if (e.which === 40) {
+            right_paddle.dy = paddleSpeed;
+        }
+        // left arrow key
+        if (e.which === 37) {
+            right_paddle.dx = -paddleSpeed;
+        }
+        // right arrow key
+        else if (e.which === 39) {
+            right_paddle.dx = paddleSpeed;
+        }
+
+        //* * * * * LEFT PADDLE * * * * *
+        // up arrow key
+        if (e.which === 87) {
+            left_paddle.dy = -paddleSpeed;
+        }
+        // down arrow key
+        else if (e.which === 83) {
+            left_paddle.dy = paddleSpeed;
+        }
+        // left arrow key
+        if (e.which === 65) {
+            left_paddle.dx = -paddleSpeed;
+        }
+        // right arrow key
+        else if (e.which === 68) {
+            left_paddle.dx = paddleSpeed;
+        }
+    });
+
+    document.addEventListener('keyup', function(e) {
+        if (e.which === 38 || e.which === 40) {
+            right_paddle.dy = 0;
+        }
+        if (e.which === 37 || e.which === 39) {
+            right_paddle.dx = 0;
+        }
+
+        if (e.which === 87 || e.which === 83) {
+            left_paddle.dy = 0;
+        }
+        if (e.which === 65 || e.which === 68) {
+            left_paddle.dx = 0;
+        }
+    });
 
     function draw_table(){
         //middle dotted line
@@ -94,7 +218,7 @@
         context.fillRect(width/4 + width/2 - 180, 0, 30, height);
 
         //border
-        context.fillStyle = 'black';
+        context.fillStyle = 'lightblue';
         context.fillRect(0, 0, width, grid*1.5);
         context.fillRect(0, height - grid*1.5, width, grid*1.5);
         
@@ -119,7 +243,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 80px solid lightgrey; 
+        border: 80px solid black; 
     }
 
     #container {
