@@ -11,30 +11,31 @@
     <canvas width="2400" height="1180" id="game"></canvas>
     
 <script>
+    
     const canvas = document.getElementById('game');
     const context = canvas.getContext('2d');
     const grid = 20;
+    var gameState = "inProgress";
 
     const width = canvas.width;
     const height = canvas.height;
     const paddleSpeed = 3;
-    const puckSpeed = 2;
+    var puckSpeed = 3;
 
-    const minX = 110;
+    const minX = 142;
     const minY = 142;
-    const maxX = width - 110;
+    const maxX = width - 142;
     const maxY = height - 142;
 
-//leftpad, righpad, puck, canvas score system
     const puck = {
-        x: canvas.width/2,
-        y: canvas.height/2,
+        x: width/2,
+        y: height/2,
         circleRadius: 40,
         circleBorder: 5,
         section: "all",
 
-        dx: 0,
-        dy: 0
+        dx: puckSpeed,
+        dy: -puckSpeed
     }
 
     const left_paddle = {
@@ -59,12 +60,44 @@
         dy: 0
     }
 
-    function collides(obj1, obj2) {
-        return obj1.x < obj2.x + obj2.width &&
-                obj1.x + obj1.width > obj2.x &&
-                obj1.y < obj2.y + obj2.height &&
-                obj1.y + obj1.height > obj2.y;
+    const left_goal = {
+        x: 0,
+        y: height/4,
+        width: 60, 
+        height: height/2,
+
+        score: 0
     }
+
+    const right_goal = {
+        x: 0,
+        y: height/4,
+        width: 60, 
+        height: height/2,
+
+        score: 0
+    }
+
+    function collides(paddle) {
+        if (puck.y + puck.circleRadius > paddle.y - paddle.circleRadius && puck.y - puck.circleRadius < paddle.y + paddle.circleRadius) {
+            if (puck.x + puck.circleRadius > paddle.x - paddle.circleRadius && puck.x - puck.circleRadius < paddle.x + paddle.circleRadius) {
+                // Puck collided with the paddle, change its direction
+                if(puck.y <= paddle.y + paddle.circleRadius){
+                    puck.dy *= -1;
+                } 
+                if(puck.x <= paddle.x + paddle.circleRadius){
+                    puck.dx *= -1;
+                } 
+                if(puck.y >= paddle.y - paddle.circleRadius){
+                    puck.dy *= -1;
+                } 
+                if(puck.x >= paddle.x - paddle.circleRadius){
+                    puck.dx *= -1;
+                } 
+            }
+        }
+    }
+
 
     function stayInBorder(obj, minX, minY, maxX, maxY){
         if(obj.y <= minY){
@@ -81,6 +114,7 @@
         } 
     }
 
+
     // game loop
     function loop() {
         draw_table();
@@ -91,11 +125,30 @@
         right_paddle.y += right_paddle.dy;
         right_paddle.x += right_paddle.dx;
 
+        puck.x += puck.dx;
+        puck.y += puck.dy;
+
+        if(puck.y <= 70){
+            puck.dy *= -1;
+        } 
+        if(puck.x <= 70){
+            puck.dx *= -1;
+        } 
+        if(puck.y >= height - 70){
+            puck.dy *= -1;
+        } 
+        if(puck.x >= width - 70){
+            puck.dx *= -1;
+        } 
+
+
+        collides(left_paddle);
+        collides(right_paddle);
+
         //move puck
 
         stayInBorder(left_paddle, minX, minY, width/2 - 110, maxY);
         stayInBorder(right_paddle, width/2 + 110, minY, maxX, maxY);
-        stayInBorder(puck, minX, minY, maxX, maxY);
 
         //puck
         context.beginPath();
@@ -123,6 +176,33 @@
         context.strokeStyle = 'black';
         context.fill();
         context.stroke();
+
+        // * * * * * * * * * * * * 
+        // * * * * ENDGAME * * * * 
+        // * * * * * * * * * * * * 
+        if(100 >= puck.x && puck.y >= left_goal.y && puck.y <= height - height/4){
+            left_goal.score++;
+            puckSpeed = 0;
+            gameState = "leftWin";
+            puck.x = width/2;
+            puck.y = height/2;
+        }
+        if(width - 100 <= puck.x && puck.y >= left_goal.y && puck.y <= height - height/4){
+            right_goal.score++;
+            puckSpeed = 0;
+            gameState = "rightWin";
+            puck.x = width/2;
+            puck.y = height/2;
+            
+        }
+
+        // if (gameState == "leftWin" || gameState == "rightWin") {
+        //     // context.font = "bold 80px Arial";
+        //     context.fillStyle = 'orange';
+        //     // context.textAlign = "center";
+        //     // context.fillText("WINNER", width / 2, height / 2);
+        //     context.fillRect(width/2, height/2, 30, height);
+        // }
 
         requestAnimationFrame(loop)
     }
@@ -214,14 +294,22 @@
 
         //two blue lines
         context.fillStyle = 'lightblue';
-        context.fillRect(width/4 + 150, 0, grid*1.5, height);
+        context.fillRect(width/4 + 150, 0, 30, height);
         context.fillRect(width/4 + width/2 - 180, 0, 30, height);
 
         //border
         context.fillStyle = 'lightblue';
         context.fillRect(0, 0, width, grid*1.5);
         context.fillRect(0, height - grid*1.5, width, grid*1.5);
+        context.fillRect(0, 0, 30, height/4);
+        context.fillRect(width - 30, 0, 30, height/4);
+        context.fillRect(0, height - height/4, 30, height/4);
+        context.fillRect(width - 30, height - height/4, 30, height/4);
         
+        //goals
+        context.fillStyle = 'white';
+        context.fillRect(0, height/4, 60, height/2);
+        context.fillRect(width - 60, height/4, 60, height/2);
     }
 
 
