@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu</title>
+    <meta charset="UTF-8">
+
+    <style>
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+        }
+
+        .title {
+            position: relative;
+            top: 200px;
+            left: 50%;
+            width: 400px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            border: 15px solid red;
+            background-color: rgb(0, 0, 0);
+            padding: 20px;
+            border-radius: 20px;
+        }   
+
+        .play-button {
+            position: relative;
+            top: 800px;
+            left: 50%;
+            width: 400px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            border: 15px solid red;
+            background-color: rgb(0, 0, 0);
+            padding: 20px;
+            border-radius: 20px;
+        }   
+
+        .retro-font {
+            font-family: 'Courier New', monospace;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 120px;
+            font-weight: 900;
+            color: white;
+        }
+
+    </style>
+</head>
+<body style="background-color: black;">
+    <script>
+        var canvas = document.createElement('canvas');
+        var context = canvas.getContext('2d');
+
+        var width = window.innerWidth;
+        var height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        document.body.appendChild(canvas);
+
+        var puckSpeed = 2;
+
+        const puck = {
+            x: width/2,
+            y: height/2,
+            circleRadius: 40,
+            circleBorder: 5,
+            section: "all",
+
+            dx: puckSpeed,
+            dy: -puckSpeed
+        }
+
+        // Game title
+        var title = document.createElement('title');
+        title.id = 'title';
+        title.classList.add('title');
+        title.classList.add('retro-font');
+        title.innerText = 'AIR HOCKEY';
+        document.body.appendChild(title);
+
+        // Create the play button 
+        var startButton = document.createElement('button');
+        startButton.id = 'startButton';
+        startButton.classList.add('play-button');
+        startButton.classList.add('retro-font');
+        startButton.innerText = 'PLAY';
+        document.body.appendChild(startButton);
+
+        function loop() {
+            draw_menu();
+
+            //draw puck
+            context.beginPath();
+            context.arc(puck.x, puck.y, puck.circleRadius, 0, 2 * Math.PI);
+            context.fillStyle = 'red'
+            context.lineWidth = puck.circleBorder;
+            context.strokeStyle = 'black';
+            context.fill();
+            context.stroke();
+
+            puck.x += puck.dx;
+            puck.y += puck.dy;
+
+            if(puck.y <= 70){
+                puck.dy *= -1;
+            } 
+            if(puck.x <= 70){
+                puck.dx *= -1;
+            } 
+            if(puck.y >= height - 70){
+                puck.dy *= -1;
+            } 
+            if(puck.x >= width - 70){
+                puck.dx *= -1;
+            } 
+
+            requestAnimationFrame(loop)
+        }
+
+        function draw_menu(){
+            //two blue lines
+            context.fillStyle = 'lightblue';
+            context.fillRect(width/4 + 150, 0, 30, height);
+            context.fillRect(width/4 + width/2 - 180, 0, 30, height);
+
+            //border
+            // context.fillStyle = 'red';
+            context.fillRect(0, 0, 30, height);
+            context.fillRect(width - 30, 0, 30, height);
+            context.fillRect(0, 0, width, 30);
+            context.fillRect(0, height - 30, width, 30);
+        }
+
+        function glitch(){
+            
+        }
+
+        document.getElementById('startButton').addEventListener('click', function() {
+            window.location.href = 'pong.html'; // Redirect to the pong.html file to start the game
+        });
+
+        requestAnimationFrame(loop)
+    </script>
+</body>
+</html>

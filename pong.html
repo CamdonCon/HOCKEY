@@ -4,18 +4,57 @@
     <title>PONG</title>
     <meta charset="UTF-8">
 
+    <style>
+        html, body {
+            height: 93.5%;
+            margin: 0;
+        }
+    
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 80px solid black; 
+        }
+    
+        #container {
+            width: 750px;
+            height: 585px;
+        }
+
+        #backButton {
+            background-color: rgb(255, 255, 255);
+            display: flex;
+            position: fixed; 
+            font-size: 20px;
+            
+            top: 20px; 
+            left: 20px;
+        }
+
+        
+
+    </style>
+
 </head>
 
 
 <body style="background-color:black;">
     <canvas width="2400" height="1180" id="game"></canvas>
+    <button id="backButton">BACK</button>
     
 <script>
+    document.getElementById('backButton').addEventListener('click', function() {
+        window.location.href = 'menu.html'; // Redirect to the menu.html file
+    });
     
     const canvas = document.getElementById('game');
     const context = canvas.getContext('2d');
     const grid = 20;
     var gameState = "inProgress";
+    var leftPointCount = 0;
+    var rightPointCount = 0;
+    var points2win = 3;
 
     const width = canvas.width;
     const height = canvas.height;
@@ -181,14 +220,14 @@
         // * * * * ENDGAME * * * * 
         // * * * * * * * * * * * * 
         if(100 >= puck.x && puck.y >= left_goal.y && puck.y <= height - height/4){
-            left_goal.score++;
+            leftPointCount = leftPointCount + 1;
             puckSpeed = 0;
             gameState = "leftWin";
             puck.x = width/2;
             puck.y = height/2;
         }
         if(width - 100 <= puck.x && puck.y >= left_goal.y && puck.y <= height - height/4){
-            right_goal.score++;
+            rightPointCount = rightPointCount + 1;
             puckSpeed = 0;
             gameState = "rightWin";
             puck.x = width/2;
@@ -196,14 +235,16 @@
             
         }
 
-        // if (gameState == "leftWin" || gameState == "rightWin") {
-        //     // context.font = "bold 80px Arial";
-        //     context.fillStyle = 'orange';
-        //     // context.textAlign = "center";
-        //     // context.fillText("WINNER", width / 2, height / 2);
-        //     context.fillRect(width/2, height/2, 30, height);
-        // }
+        if (leftPointCount == points2win) {
+            context.fillStyle = 'orange';
+            context.fillRect(width/2 - 100, height/2 - 50, 200, 100);
+        }
 
+        if (rightPointCount == points2win) {
+            context.fillStyle = 'green';
+            context.fillRect(width/2 - 100, height/2 - 50, 200, 100);
+        }
+        
         requestAnimationFrame(loop)
     }
 
@@ -312,7 +353,9 @@
         context.fillRect(width - 60, height/4, 60, height/2);
     }
 
+    function restartGame(){
 
+    }
 
     // starting the game
     requestAnimationFrame(loop);
@@ -320,26 +363,3 @@
 </script>
 </body> 
 </html> 
-
-<style>
-    html, body {
-        height: 93.5%;
-        margin: 0;
-    }
-
-    body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 80px solid black; 
-    }
-
-    #container {
-        width: 750px;
-        height: 585px;
-    }
-
-    
-
-
-</style>
