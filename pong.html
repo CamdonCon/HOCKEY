@@ -58,7 +58,7 @@
 
     const width = canvas.width;
     const height = canvas.height;
-    const paddleSpeed = 3;
+    const paddleSpeed = 5;
     var puckSpeed = 3;
 
     const minX = 142;
@@ -72,9 +72,10 @@
         circleRadius: 40,
         circleBorder: 5,
         section: "all",
+        puckSpeed: 3,
 
-        dx: puckSpeed,
-        dy: -puckSpeed
+        dx: 0,
+        dy: 0
     }
 
     const left_paddle = {
@@ -122,15 +123,19 @@
             if (puck.x + puck.circleRadius > paddle.x - paddle.circleRadius && puck.x - puck.circleRadius < paddle.x + paddle.circleRadius) {
                 // Puck collided with the paddle, change its direction
                 if(puck.y <= paddle.y + paddle.circleRadius){
+                    puck.dy += .2;
                     puck.dy *= -1;
                 } 
                 if(puck.x <= paddle.x + paddle.circleRadius){
+                    puck.dy += .2;
                     puck.dx *= -1;
                 } 
                 if(puck.y >= paddle.y - paddle.circleRadius){
+                    puck.dy += .2;
                     puck.dy *= -1;
                 } 
                 if(puck.x >= paddle.x - paddle.circleRadius){
+                    puck.dy += .2;
                     puck.dx *= -1;
                 } 
             }
@@ -219,16 +224,17 @@
         // * * * * * * * * * * * * 
         // * * * * ENDGAME * * * * 
         // * * * * * * * * * * * * 
+
         if(100 >= puck.x && puck.y >= left_goal.y && puck.y <= height - height/4){
-            leftPointCount = leftPointCount + 1;
-            puckSpeed = 0;
+            leftPointCount += 1;
+            // puckSpeed = 0;
             gameState = "leftWin";
             puck.x = width/2;
             puck.y = height/2;
         }
         if(width - 100 <= puck.x && puck.y >= left_goal.y && puck.y <= height - height/4){
-            rightPointCount = rightPointCount + 1;
-            puckSpeed = 0;
+            rightPointCount += 1;
+            // puckSpeed = 0;
             gameState = "rightWin";
             puck.x = width/2;
             puck.y = height/2;
